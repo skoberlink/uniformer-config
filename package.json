@@ -1,0 +1,44 @@
+{
+  "name": "uniformer",
+  "description": "returns a key-value object from combined config file/argv values.",
+  "version": "0.0.1",
+  "homepage": "https://github.com/b3ngr33ni3r/uniform",
+  "author": {
+    "name": "Ben Greenier",
+    "email": "ben+npm@bengreenier.com",
+    "homepage": "bengreenier.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/b3ngr33ni3r/uniformer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/b3ngr33ni3r/uniformer/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/b3ngr33ni3r/uniformer/blob/master/LICENSE"
+    }
+  ],
+  "main": "lib/uniformer",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt nodeunit",
+    "start": "server.js"
+  },
+  "dependencies": {
+    "js-yaml": "~2.1.0",
+    "extend": "~1.2.1"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt": "~0.4.1"
+  },
+  "keywords": ["config","argument","argument","config parse","argument parse"],
+  "preferGlobal": true
+}
