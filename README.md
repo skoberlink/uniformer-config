@@ -38,7 +38,7 @@ it's super easy to use...__without config__:
     var uniformer = require('uniformer');
     var normalizedOptionsObject = uniformer();
     ```
-will return `{machines:['server01','server02','localhost']} when your application is called like this:
+will return `{machines:['server01','server02','localhost']}` when your application is called like this:
     ```
     $ node application.js --machines server01 server02 localhost
     ```
