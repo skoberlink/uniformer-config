@@ -60,7 +60,7 @@ with a config.json that looks like:
       "machines":['server01','server02','localhost']
     }
     ```
-will return `{machines:['server01','server02','localhost']} when your application is called like this:
+will return `{machines:['server01','server02','localhost']}` when your application is called like this:
     ```
     $ node application.js
     ```
