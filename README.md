@@ -64,7 +64,7 @@ will return `{machines:['server01','server02','localhost']}` when your applicati
     ```
     $ node application.js
     ```
-or will return `{machines:['server01','server02','localhost'],deploy:true} when called like:
+or will return `{machines:['server01','server02','localhost'],deploy:true}` when called like:
     ```
     $ node application.js --deploy true
     ```    
