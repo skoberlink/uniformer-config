@@ -82,9 +82,14 @@ _resolve = (path) ->
 uniformer = (spec = null) ->
   argv = spec?.argv || process.argv #this is useful for tests
   resultant = {}
+  argvProc = _proc argv
+  if spec? and argvProc["config"]?
+    spec.file = argvProc["config"]
+    delete argvProc["config"]
+
   if spec?.file? and fs.existsSync _resolve(spec.file)
     resultant = extend true,resultant,require(spec.file)
-  resultant = extend true,resultant,_proc argv
+  resultant = extend true,resultant,argvProc
 
 
 module.exports = uniformer

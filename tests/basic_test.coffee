@@ -68,5 +68,11 @@ exports.basicTests = {
     test.deepEqual uniformer({file:'../tests/test_config.yaml',argv:['-super.man','cool','--super.big.tree','false','-super.big.hill','true']}),{super:{man:'cool',big:{tree:false,hill:true,cat:12,turtle:"ahh"}}},"simple yaml merge"
     test.done()
 
+  'config argument test': (test) ->
+    test.expect 3
+    test.deepEqual uniformer({argv:['--config','../tests/test_config.yaml']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml via --config"
+    test.deepEqual uniformer({argv:['-config','../tests/test_config.yaml']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml via -config"
+    test.deepEqual uniformer({argv:['--config','../tests/test_config.yaml','--extra','big','pie']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}},extra:['big','pie']},"simple yaml via --config with extra mixin"
+    test.done()
 
 }
