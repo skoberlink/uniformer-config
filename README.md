@@ -3,6 +3,8 @@ uniformer
 
 returns a key-value object from combined config file/argv values.
 
+the __Pipeline__ version is a major rewrite that uses an extensible option processing pipeline
+
 ## Changelog
 
 v0.0.2

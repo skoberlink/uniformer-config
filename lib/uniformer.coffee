@@ -3,6 +3,7 @@ require 'js-yaml'
 fs = require 'fs'
 extend = require 'extend'
 
+# change this for the pipeline
 # this way it extendable if need be
 # note the order is significant here...
 # longer identifiers first
@@ -12,6 +13,7 @@ argumentIdentifiers = ["--","-"]
 # add better array type checking
 typeIsArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is '[object Array]'
 
+# convert strings to native js types
 _typeProc = (val) ->
   if typeof val == 'number'
     return new Number(val);
@@ -22,74 +24,59 @@ _typeProc = (val) ->
   else
     return val;
 
-# process chunk string cI
-_chunkProc = (resultant,cI,arg) ->
-  parent = resultant
-  chunks = cI.split '.'
-  for chunk in chunks
-    if _i < chunks.length-1
-      if not parent[chunk]?
-        parent[chunk] = {}
-      parent = parent[chunk]
-  key = chunks[chunks.length-1]
-  if not parent[key]?
-    parent[key] = _typeProc arg
-  else
-    if typeIsArray parent[key]
-      parent[key].push _typeProc arg
-    else
-      oldArg = parent[key]
-      parent[key] = new Array()
-      parent[key].push oldArg,_typeProc arg
-  return resultant
 
-# create a processed object from an argv
-_proc = (argv) ->
-  cI = null
-  resultant = {}
-  for arg in argv
-    isKey = false
-    for identifier in argumentIdentifiers
-      isKey = (arg.substr(0,identifier.length) == identifier)
-      if isKey
-        cI = arg.substr identifier.length,arg.length
-        break
-    if !isKey and cI
-      resultant = _chunkProc resultant,cI,arg
-  return resultant
-
-# path fixer
-# todo: this
-_resolve = (path) ->
-  return __dirname+"/"+path
-
-# uniform takes a spec object
 #
-# {
-#   file:'path/to/config.(json|yaml)',
-#   supported:[['key1','-k'],'key2','key3']
-# }
+# BEGIN REWRITE 
+# 
+#    BELOW
 #
-#
-# and loads from a config.json
-# a config.yaml or process.argv
-# arguments, to return a key-value
-# object that makes sense.
-#
-# argv values override config file values
-# on the returned key-value object
-
-uniformer = (spec = null) ->
-  argv = spec?.argv || process.argv #this is useful for tests
-  resultant = {}
-  argvProc = _proc argv
-  if spec? and argvProc["config"]?
-    spec.file = argvProc["config"]
-    delete argvProc["config"]
-
-  if spec?.file? and fs.existsSync _resolve(spec.file)
-    resultant = extend true,resultant,require(spec.file)
-  resultant = extend true,resultant,argvProc
 
 
-module.exports = uniformer
+
+
+#define the defaults options
+defaults = {
+  pipeline: false, # if true, we use emitter pipeline processing.
+  argv: process.argv # allows an alternative argv source 
+}
+
+
+class Uniformer extends EventEmitter
+  # i always forget if i can use this in a "method"
+  test = () ->
+    console.log "hi"
+
+  constructor: (@opts = {}) ->
+    extend true,defaults,@opts
+    if not @opts.pipeline
+      return inlineProcessor()
+
+  # executes a chain of processors (file,argument)
+  inlineProcessor: () ->
+    processed = {}
+    if @opts.file?
+      processed = fileProcessor()
+    processed = extend true,processed,argumentProcessor()
+    return processed
+  
+  # there's really nothing to file parsing (sure we'll do some error handling here later)
+  fileProcessor: () ->
+    return require @opts.file
+
+  #parse @opts.argv , no validation/typechecking, i'm not your mother
+  argumentProcessor: () ->
+    processed = {}
+    for arg in @opts.argv
+      if isSupported arg
+        if isKey arg
+          processed[arg] = getValues arg,@opts.argv
+        else if isSwitch arg
+          processed[arg] = true
+        else
+          if @opts.pipeline
+            @emit 'error',new Uniformer.InvalidArgument arg
+
+
+
+
+module.exports = Uniformer
