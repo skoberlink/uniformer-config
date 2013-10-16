@@ -17,20 +17,14 @@ isKey = (val,keyDefs = ['--','-']) ->
   return false
 
 # determine if a value is a nested key value, and return a nest
-isNested = (val,fillVal = true) ->
+isNested = (val) ->
   if not isString val
     return false
   dotted = val.split '.'
   if dotted.length <= 0
     return false
-  result = {nested:{},key:dotted[0]}
-  it = result.nested
-  for dot in dotted
-    if _i > 1 and _i < _len-1
-      it[dot] = {}
-      it = it[dot]
-  it[dotted[dotted.length-1]] = fillVal
-  return result
+  else
+    return dotted
 
 #determine if kv, and return a kv
 isKv = (val) ->
@@ -68,50 +62,68 @@ procFile = (file) ->
     return require file
 
 # process an argv
-procArgs = (argv) ->                            #<unsupported> nested and kv cannnot happen
-  root = {uniformer:{}}                         #our root object, containing uniformer data and processed
-  processed = {}                                #the result
-  booleanKey = false                            #used to mark bool keys
-  processedPtr = processedPtr                   #this is where we actually write values into
-  for arg in argv                               #iterate
-    if (key = isKey(arg)) != false              #key
-      if (nest = isNested(key,true)) != false   #nest, return {key:'',nest:{}} and fill lowest with true
-        if processed[nest.key]?                 # if the nest is already a key, merge wit it, overriding
-          processed[nest.key] = extend true,processed[nest.key],nest.nest
+procArgs = (argv) ->
+  root = {}
+  for arg,index in argv
+    if (key = isKey arg) != false
+      values = []
+      if (kv = isKv arg) != false
+        key = kv.key
+        values.push typeChange kv.value
+      for vindex in [index..argv.length-1] by 1
+        if not isKey argv[vindex]
+          values.push typeChange argv[vindex]
         else
-          processed[nest.key] = nest.nested     # else set nest = nested
-        processedPtr = processed[nest.key]
-        booleanKey = true
-      else if (kv = isKv(key)) != false         #kv, return {key:'',value:''}
-        processed[kv.key] = typeChange kv.value #set the kv key to typeChange'd value
-        processedPtr = processedPtr             #reset our ptr to the root, there is no more values for this
-        booleanKey = false                      #reset this flag too, as we're not usin it
+          break
+      if values.length == 1
+        values = values[0]
+      else if values.length == 0
+        values = true
+      # now we have the values for that key
+      if (nested = isNested key) != false
+        ptr = root
+        for chunk,cindex in nested
+          if cindex < nested.length-1
+            if ptr[chunk]? and not isObject ptr[chunk]
+              _debug "argv value tried to override existing structure "+ptr[chunk]
+              break
+            if not ptr[chunk]?
+              ptr[chunk] = {}
+            ptr = ptr[chunk]
+          else
+            if ptr[chunk]? and isArray ptr[chunk]
+              if isArray values
+                ptr[chunk] = ptr[chunk].join values
+              else
+                ptr[chunk].push values
+            else if ptr[chunk]? and isObject ptr[chunk]
+              _debug "argv value tried to override existing structure "+ptr[chunk]
+              break
+            else if not ptr[chunk]?
+              ptr[chunk] = values
       else
-        processed[key] = true                   #default 
-        processedPtr = processed[key]           #set our next
-        booleanKey = true
-    else
-      if not processedPtr?                      # if we don't have a pointer, put it in the _root of root
-        if not isArray root.uniformer['_root']
-          root.uniformer['_root'] = []
-        root.uniformer['_root'].push typeChange arg
-      else                                      # otherwise do the ptr change
-        if booleanKey
-          processedPtr = typeChange arg
-          booleanKey = false
-        else if not isArray processedPtr
-          processedPtr = []
-          processedPtr.push typeChange arg
-        else
-          processedPtr.push typeChange arg
-  root['processed'] = processed    
-
+        if root[key]? and isObject root[key]
+          _debug "argv value tried to override existing structure "+root[key]
+          continue 
+        else if root[key]? and isArray root[key]
+            if isArray values
+              root[key] = root[key].join values
+            else
+              root[key].push values
+        else if not root[key]?
+          root[key] = values
+  return root
+         
+  
 
 defaults = {
   argv: process.argv
 }
 uniformer = (opts = null) ->
-  opts = extend true,defaults,opts
+  if opts? and isObject opts
+    opts = extend true,defaults,opts
+  else if opts? and isString opts
+    opts = extend true,defaults,{file:opts}
   processed = extend true,{},procArgs opts.argv
   if processed["config"]? and not isSupported("config",opts.supported || null)
     opts.file = processed["config"]
@@ -119,8 +131,6 @@ uniformer = (opts = null) ->
   if opts.file?
     processed = extend true,procFile(__dirname+"/"+opts.file),processed #<unsupported> non __dirname opts.file
   return processed
-
-
 
 
 module.exports = uniformer

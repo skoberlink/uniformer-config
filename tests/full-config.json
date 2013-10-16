@@ -1,0 +1,13 @@
+{
+  "uniformer": {
+    "supported": ["config"],
+    "debug": "console"
+  },
+  "super": {
+    "parent": {
+      "key": "value",
+      "arr": ["entry","entry","entry"],
+      "num": 1
+    }
+  }
+}
