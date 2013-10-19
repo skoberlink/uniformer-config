@@ -86,6 +86,13 @@ __currently only relative path-ed config files are supported!__
 
 you can [peruse the tests](https://github.com/b3ngr33ni3r/uniformer/blob/master/tests) to learn a bit more.
 
+## Some notes
+there's a few __reserved keys__ that you won't be able to override in argv. bear with me if this seems a bit counter-intuitive:  
+
++ `uniformer` - you can't ever override this. sorry. if you specify this in an options file that you pass to uniformer, the relevent sections will be used to configure it
+    + `_root` - contains elements that are specified without a key
++ `config` - by default, this tells uniformer to parse a json/yaml as options. however, you can ditch this functionality (and therefore unreserve this key) by specifying `supported: ['config']`
+
 
 ## More stuff?
 

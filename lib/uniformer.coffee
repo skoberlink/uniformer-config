@@ -2,6 +2,13 @@ require 'js-yaml'
 fs = require 'fs'
 extend = require 'extend'
 
+_debugState = 'console';
+_debug = (msg...) ->
+  switch _debugState
+    when 'console'
+      for m in msg 
+        console.log m
+
 # some helpful type checkers
 isArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is '[object Array]'
 isString = ( value ) -> return typeof value == 'string'
@@ -21,7 +28,7 @@ isNested = (val) ->
   if not isString val
     return false
   dotted = val.split '.'
-  if dotted.length <= 0
+  if dotted.length <= 1
     return false
   else
     return dotted
@@ -31,29 +38,58 @@ isKv = (val) ->
   if not isString val
     return false
   eq = val.split '='
-  if eq.length <= 0
+  if eq.length == 1
     return false
   result = {key:eq[0],value:eq[1]} #<unsupported> kv only supports one value
 
-
+#allows us to validate key format
+isKeyValid = ( key ) ->
+  if not key?
+    return false
+  if not isString key
+    return false
+  return true
 #determine if a config 'key' value is supported
-isSupported = (key,supported = null) ->
-  if not supported?
+_supported = null
+isSupported = (key) ->
+  if not _supported?
     return true
   for support in supported
     if key == support
       return true
   return false
 
+
+#determine if we can make an object = value
+canMake = (object,value) ->
+  if not object?
+    return value
+  if isObject object
+    return false # we don't override objects
+  else if isArray object
+    if isArray value
+      return object.concat value #we merge into arrays
+    else
+      return object.push value #we merge into arrays
+  else
+    return value #we override literals
+
+
 # convert string types back to normal types
 typeChange = (val) ->
-  if typeof val == 'number'
-    return new Number(val);
+  if not val?
+    return val
+  else if not isNaN val
+    _debug "typechange to number for "+val
+    return parseInt val
   else if val.toLowerCase() == 'false'
+    _debug "typechange to false for "+val
     return false;
   else if val.toLowerCase() == 'true'
+    _debug "typechange to true for "+val
     return true;
   else
+    _debug "no typechange needed for "+val
     return val;
 
 # process a file
@@ -64,68 +100,71 @@ procFile = (file) ->
 # process an argv
 procArgs = (argv) ->
   root = {}
-  for arg,index in argv
+  for arg,aindex in argv
     if (key = isKey arg) != false
-      values = []
-      if (kv = isKv arg) != false
-        key = kv.key
-        values.push typeChange kv.value
-      for vindex in [index..argv.length-1] by 1
-        if not isKey argv[vindex]
-          values.push typeChange argv[vindex]
-        else
-          break
-      if values.length == 1
-        values = values[0]
-      else if values.length == 0
-        values = true
-      # now we have the values for that key
-      if (nested = isNested key) != false
-        ptr = root
-        for chunk,cindex in nested
-          if cindex < nested.length-1
-            if ptr[chunk]? and not isObject ptr[chunk]
-              _debug "argv value tried to override existing structure "+ptr[chunk]
-              break
-            if not ptr[chunk]?
-              ptr[chunk] = {}
-            ptr = ptr[chunk]
+      if isSupported key and isKeyValid key
+
+        _debug "key found "+key
+        vals = []
+        for vindex in [aindex+1..argv.length-1] by 1 #keep in mind, this wrecks speed
+          if isKey(argv[vindex]) == false
+            _debug "adding value "+argv[vindex]
+            vals.push typeChange argv[vindex]
+            delete argv[vindex] # this speeds up the outter loop
           else
-            if ptr[chunk]? and isArray ptr[chunk]
-              if isArray values
-                ptr[chunk] = ptr[chunk].join values
+            break
+        #now we have our vals array populated
+        if (kv = isKv key) != false
+          _debug "kv parsed "+kv.key+"="+kv.value
+          vals = typeChange kv.value #.splice 0,0,  #frontload this so it's vals[0]
+          key = kv.key
+        #corrected for kv
+        if vals.length == 0
+          _debug "no values found, setting to true"
+          vals = true
+        #corrected for boolean if only --key
+        if (nest = isNested key) != false
+          _debug "processing nest "+nest.toString()
+          ptr = root
+          for chunk,cindex in nest
+            if cindex<nest.length-1
+              if (entry = canMake(ptr[chunk],{})) != false
+                ptr[chunk] = entry
               else
-                ptr[chunk].push values
-            else if ptr[chunk]? and isObject ptr[chunk]
-              _debug "argv value tried to override existing structure "+ptr[chunk]
-              break
-            else if not ptr[chunk]?
-              ptr[chunk] = values
-      else
-        if root[key]? and isObject root[key]
-          _debug "argv value tried to override existing structure "+root[key]
-          continue 
-        else if root[key]? and isArray root[key]
-            if isArray values
-              root[key] = root[key].join values
+                _debug "cannot make entry under "+chunk
             else
-              root[key].push values
-        else if not root[key]?
-          root[key] = values
+              if (entry = canMake(ptr[chunk],vals))
+                ptr[chunk] = entry
+                _debug "made "+entry+" under "+chunk
+              else
+                _debug "cannot make entry under "+chunk
+            ptr = ptr[chunk]
+        #corrected and entered for nest
+        else
+          if (entry = canMake(root[key],vals)) != false
+            root[key] = entry
+          else
+            _debug "cannot make entry "+root[key]
+        #entered for non-nest
+      else
+        _debug key+" is not supported"
   return root
-         
-  
 
 defaults = {
-  argv: process.argv
+  argv: process.argv,
+  debug: 'console'
 }
 uniformer = (opts = null) ->
-  if opts? and isObject opts
-    opts = extend true,defaults,opts
-  else if opts? and isString opts
+  if opts? and isString opts
     opts = extend true,defaults,{file:opts}
+  else
+    opts = extend true,defaults,opts
+  if opts['supported']?
+    _supported = opts['supported']
+  else
+    _supported = null
   processed = extend true,{},procArgs opts.argv
-  if processed["config"]? and not isSupported("config",opts.supported || null)
+  if processed["config"]? and not isSupported "config"
     opts.file = processed["config"]
     delete processed["config"]
   if opts.file?
