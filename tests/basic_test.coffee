@@ -50,29 +50,35 @@ exports.basicTests = {
   
   'json test': (test) ->
     test.expect 1
-    test.deepEqual uniformer({file:'../tests/test_config.json'}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple json"
+    test.deepEqual uniformer({file:'tests/test_config.json'}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple json"
     test.done()
 
   'yaml test': (test) ->
     test.expect 1
-    test.deepEqual uniformer({file:'../tests/test_config.yaml'}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml"
+    test.deepEqual uniformer({file:'tests/test_config.yaml'}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml"
     test.done()
 
   'json merge test': (test) ->
     test.expect 1
-    test.deepEqual uniformer({file:'../tests/test_config.json',argv:['-super.man','cool','--super.big.tree','false','-super.big.hill','true']}),{super:{man:'cool',big:{tree:false,hill:true,cat:12,turtle:"ahh"}}},"simple json merge"
+    test.deepEqual uniformer({file:'tests/test_config.json',argv:['-super.man','cool','--super.big.tree','false','-super.big.hill','true']}),{super:{man:'cool',big:{tree:false,hill:true,cat:12,turtle:"ahh"}}},"simple json merge"
     test.done()
 
   'yaml merge test': (test) ->
     test.expect 1
-    test.deepEqual uniformer({file:'../tests/test_config.yaml',argv:['-super.man','cool','--super.big.tree','false','-super.big.hill','true']}),{super:{man:'cool',big:{tree:false,hill:true,cat:12,turtle:"ahh"}}},"simple yaml merge"
+    test.deepEqual uniformer({file:'tests/test_config.yaml',argv:['-super.man','cool','--super.big.tree','false','-super.big.hill','true']}),{super:{man:'cool',big:{tree:false,hill:true,cat:12,turtle:"ahh"}}},"simple yaml merge"
     test.done()
 
   'config argument test': (test) ->
     test.expect 3
-    test.deepEqual uniformer({argv:['--config','../tests/test_config.yaml']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml via --config"
-    test.deepEqual uniformer({argv:['-config','../tests/test_config.yaml']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml via -config"
-    test.deepEqual uniformer({argv:['--config','../tests/test_config.yaml','--extra','big','pie']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}},extra:['big','pie']},"simple yaml via --config with extra mixin"
+    test.deepEqual uniformer({argv:['--config','tests/test_config.yaml']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml via --config"
+    test.deepEqual uniformer({argv:['-config','tests/test_config.yaml']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}}},"simple yaml via -config"
+    test.deepEqual uniformer({argv:['--config','tests/test_config.yaml','--extra','big','pie']}),{super:{big:{tree:true,hill:false,cat:12,turtle:"ahh"}},extra:['big','pie']},"simple yaml via --config with extra mixin"
     test.done()
+
+  'defaults test': (test) ->
+    test.expect 1
+    test.deepEqual uniformer({defaults:{given:true,override:false},argv:['--override','true','--extra','value']}),{given:true,override:true,extra:'value'}
+    test.done()
+
 
 }

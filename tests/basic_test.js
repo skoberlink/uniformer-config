@@ -107,7 +107,7 @@ exports.basicTests = {
   'json test': function(test) {
     test.expect(1);
     test.deepEqual(uniformer({
-      file: '../tests/test_config.json'
+      file: 'tests/test_config.json'
     }), {
       "super": {
         big: {
@@ -123,7 +123,7 @@ exports.basicTests = {
   'yaml test': function(test) {
     test.expect(1);
     test.deepEqual(uniformer({
-      file: '../tests/test_config.yaml'
+      file: 'tests/test_config.yaml'
     }), {
       "super": {
         big: {
@@ -139,7 +139,7 @@ exports.basicTests = {
   'json merge test': function(test) {
     test.expect(1);
     test.deepEqual(uniformer({
-      file: '../tests/test_config.json',
+      file: 'tests/test_config.json',
       argv: ['-super.man', 'cool', '--super.big.tree', 'false', '-super.big.hill', 'true']
     }), {
       "super": {
@@ -157,7 +157,7 @@ exports.basicTests = {
   'yaml merge test': function(test) {
     test.expect(1);
     test.deepEqual(uniformer({
-      file: '../tests/test_config.yaml',
+      file: 'tests/test_config.yaml',
       argv: ['-super.man', 'cool', '--super.big.tree', 'false', '-super.big.hill', 'true']
     }), {
       "super": {
@@ -175,7 +175,7 @@ exports.basicTests = {
   'config argument test': function(test) {
     test.expect(3);
     test.deepEqual(uniformer({
-      argv: ['--config', '../tests/test_config.yaml']
+      argv: ['--config', 'tests/test_config.yaml']
     }), {
       "super": {
         big: {
@@ -187,7 +187,7 @@ exports.basicTests = {
       }
     }, "simple yaml via --config");
     test.deepEqual(uniformer({
-      argv: ['-config', '../tests/test_config.yaml']
+      argv: ['-config', 'tests/test_config.yaml']
     }), {
       "super": {
         big: {
@@ -199,7 +199,7 @@ exports.basicTests = {
       }
     }, "simple yaml via -config");
     test.deepEqual(uniformer({
-      argv: ['--config', '../tests/test_config.yaml', '--extra', 'big', 'pie']
+      argv: ['--config', 'tests/test_config.yaml', '--extra', 'big', 'pie']
     }), {
       "super": {
         big: {
@@ -211,6 +211,21 @@ exports.basicTests = {
       },
       extra: ['big', 'pie']
     }, "simple yaml via --config with extra mixin");
+    return test.done();
+  },
+  'defaults test': function(test) {
+    test.expect(1);
+    test.deepEqual(uniformer({
+      defaults: {
+        given: true,
+        override: false
+      },
+      argv: ['--override', 'true', '--extra', 'value']
+    }), {
+      given: true,
+      override: true,
+      extra: 'value'
+    });
     return test.done();
   }
 };
