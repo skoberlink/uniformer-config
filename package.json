@@ -1,7 +1,7 @@
 {
   "name": "uniformer",
   "description": "returns a key-value object from combined config file/argv values.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/b3ngr33ni3r/uniform",
   "author": {
     "name": "Ben Greenier",
@@ -31,13 +31,15 @@
   },
   "dependencies": {
     "js-yaml": "~2.1.0",
-    "extend": "~1.2.1"
+    "extend": "~1.2.1",
+    "path-resolver":"~0.0.2"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
     "grunt-contrib-nodeunit": "~0.2.0",
     "grunt-contrib-watch": "~0.4.0",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.9"
   },
   "keywords": ["config","argument","argument","config parse","argument parse"],
   "preferGlobal": true

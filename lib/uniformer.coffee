@@ -2,6 +2,7 @@
 require 'js-yaml'
 fs = require 'fs'
 extend = require 'extend'
+pathResolver = require 'path-resolver'
 
 # this way it extendable if need be
 # note the order is significant here...
@@ -58,10 +59,6 @@ _proc = (argv) ->
       resultant = _chunkProc resultant,cI,arg
   return resultant
 
-# path fixer
-# todo: this
-_resolve = (path) ->
-  return __dirname+"/"+path
 
 # uniform takes a spec object
 #
@@ -86,9 +83,11 @@ uniformer = (spec = null) ->
   if spec? and argvProc["config"]?
     spec.file = argvProc["config"]
     delete argvProc["config"]
-
-  if spec?.file? and fs.existsSync _resolve(spec.file)
-    resultant = extend true,resultant,require(spec.file)
+  if spec?.defaults?
+    resultant = extend true,resultant,spec.defaults
+  if spec?.file?
+    if (file = pathResolver.sync(spec.file)) != false
+      resultant = extend true,resultant,require(file)
   resultant = extend true,resultant,argvProc
 
 
