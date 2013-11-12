@@ -87,8 +87,7 @@ or will return `{machines:['server01','server02','localhost'],deploy:true}` when
 ```
 $ node application.js --deploy true
 ```    
-__currently only relative path-ed config files are supported!__
-  
+
   
 
 you can [peruse the tests](https://github.com/b3ngr33ni3r/uniformer/blob/master/tests) to learn a bit more.
