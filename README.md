@@ -5,13 +5,16 @@ returns a key-value object from combined config file/argv values.
 
 ## Changelog
 v0.0.3
+
     + Added support for a passed object `defaults` that is overriden by both file and argv sources
     + fixed `file` and `config` path matching, to work cross platform abs/rel using (path-resolver)[https://github.com/b3ngr33ni3r/path-resolver]
 v0.0.2
+
     + Added support for `--config` and `-config`.
     + This overrides the passed `file` parameter
     + If users are told to use `--config path/to/config.ext` you can pass no arguments
 v0.0.1
+
     + Basic functionality
     + merge argv and config values
     + quick and easy
