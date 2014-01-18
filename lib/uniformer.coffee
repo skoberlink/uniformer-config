@@ -14,7 +14,7 @@ argumentIdentifiers = ["--","-"]
 typeIsArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is '[object Array]'
 
 _typeProc = (val) ->
-  if typeof val == 'number'
+  if typeof val == 'number' || !isNaN(val)
     return new Number(val);
   else if val.toLowerCase() == 'false'
     return false;
