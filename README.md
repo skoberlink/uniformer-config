@@ -10,6 +10,7 @@ returns a key-value object from combined config file/argv values.
 ## Changelog
 v0.0.5
 + Fixed bug with number parsing where you'd get a Number object, instead of a number literal.
+
 v0.0.3
 
 + Added support for a passed object `defaults` that is overriden by both file and argv sources
