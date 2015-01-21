@@ -1,9 +1,9 @@
 uniformer
 =======
 
-[![Dependency Status](https://david-dm.org/bengreenier/uniformer.png)](https://david-dm.org/b3ngr33ni3r/uniformer)
+[![Dependency Status](https://david-dm.org/bengreenier/uniformer.png)](https://david-dm.org/bengreenier/uniformer)
 
-[![Build Status](https://travis-ci.org/bengreenier/uniformer.png?branch=master)](https://travis-ci.org/b3ngr33ni3r/uniformer)
+[![Build Status](https://travis-ci.org/bengreenier/uniformer.png?branch=master)](https://travis-ci.org/bengreenier/uniformer)
 
 returns a key-value object from combined config file/argv values.
 
