@@ -1,9 +1,9 @@
 uniformer
 =======
 
-[![Dependency Status](https://david-dm.org/b3ngr33ni3r/uniformer.png)](https://david-dm.org/b3ngr33ni3r/uniformer)
+[![Dependency Status](https://david-dm.org/bengreenier/uniformer.png)](https://david-dm.org/b3ngr33ni3r/uniformer)
 
-[![Build Status](https://travis-ci.org/b3ngr33ni3r/uniformer.png?branch=master)](https://travis-ci.org/b3ngr33ni3r/uniformer)
+[![Build Status](https://travis-ci.org/bengreenier/uniformer.png?branch=master)](https://travis-ci.org/b3ngr33ni3r/uniformer)
 
 returns a key-value object from combined config file/argv values.
 
@@ -11,7 +11,7 @@ returns a key-value object from combined config file/argv values.
 v0.0.3
 
 + Added support for a passed object `defaults` that is overriden by both file and argv sources
-+ fixed `file` and `config` path matching, to work cross platform abs/rel using [path-resolver](https://github.com/b3ngr33ni3r/path-resolver)
++ fixed `file` and `config` path matching, to work cross platform abs/rel using [path-resolver](https://github.com/bengreenier/path-resolver)
 
 v0.0.2
 
