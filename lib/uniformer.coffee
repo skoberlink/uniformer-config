@@ -15,7 +15,7 @@ typeIsArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is 
 
 _typeProc = (val) ->
   if typeof val == 'number' || !isNaN(val)
-    return new Number(val);
+    return new Number(val).valueOf();
   else if val.toLowerCase() == 'false'
     return false;
   else if val.toLowerCase() == 'true'
