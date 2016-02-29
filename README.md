@@ -1,4 +1,4 @@
-uniformer
+uniformer-config
 =======
 
 Forked from [uniformer](https://github.com/b3ngr33ni3r/uniformer) at v0.0.5
