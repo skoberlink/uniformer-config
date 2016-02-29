@@ -27,8 +27,8 @@ _typeProc = (val) ->
 _chunkProc = (resultant,cI,arg) ->
   parent = resultant
   chunks = cI.split '.'
-  for chunk in chunks
-    if _i < chunks.length-1
+  for chunk,i in chunks
+    if i < chunks.length-1
       if not parent[chunk]?
         parent[chunk] = {}
       parent = parent[chunk]

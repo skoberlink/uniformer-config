@@ -1,9 +1,11 @@
 uniformer
 =======
 
-[![Dependency Status](https://david-dm.org/bengreenier/uniformer.png)](https://david-dm.org/bengreenier/uniformer)
+Forked from [uniformer](https://github.com/b3ngr33ni3r/uniformer) at v0.0.5
 
-[![Build Status](https://travis-ci.org/bengreenier/uniformer.png?branch=master)](https://travis-ci.org/bengreenier/uniformer)
+[![Dependency Status](https://david-dm.org/skoberlink/uniformer-config.svg)](https://david-dm.org/skoberlink/uniformer-config)
+
+[![Build Status](https://travis-ci.org/skoberlink/uniformer-config.svg?branch=master)](https://travis-ci.org/skoberlink/uniformer-config)
 
 returns a key-value object from combined config file/argv values.
 
