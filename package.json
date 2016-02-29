@@ -1,12 +1,11 @@
 {
   "name": "uniformer-config",
   "description": "returns a key-value object from combined config file/argv values (forked from uniformer).",
-  "version": "0.0.5",
-  "homepage": "https://github.com/skoberlink/uniform",
+  "version": "0.0.6",
+  "homepage": "https://github.com/skoberlink/uniform-config",
   "author": {
-    "name": "Ben Greenier",
-    "email": "ben+npm@bengreenier.com",
-    "homepage": "bengreenier.com"
+    "name": "Skoberlink",
+    "email": "Skoberlink@outlook.com"
   },
   "repository": {
     "type": "git",
