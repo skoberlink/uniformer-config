@@ -76,11 +76,13 @@ _proc = (argv) ->
 # argv values override config file values
 # on the returned key-value object
 
-uniformer = (spec = null) ->
+uniformerConfig = (spec = null) ->
   argv = spec?.argv || process.argv #this is useful for tests
   resultant = {}
   argvProc = _proc argv
-  if spec? and argvProc["config"]?
+  if argvProc["config"]?
+    if not spec?
+      spec = {}
     spec.file = argvProc["config"]
     delete argvProc["config"]
   if spec?.defaults?
@@ -91,4 +93,4 @@ uniformer = (spec = null) ->
   resultant = extend true,resultant,argvProc
 
 
-module.exports = uniformer
+module.exports = uniformerConfig

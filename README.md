@@ -10,6 +10,9 @@ Forked from [uniformer](https://github.com/b3ngr33ni3r/uniformer) at v0.0.5
 returns a key-value object from combined config file/argv values.
 
 ## Changelog
+v0.0.6
++ Fixed bug with passing config file in arguments
+
 v0.0.5
 + Fixed bug with number parsing where you'd get a Number object, instead of a number literal.
 
